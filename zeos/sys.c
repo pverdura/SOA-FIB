@@ -22,6 +22,8 @@
 #define LECTURA 0
 #define ESCRIPTURA 1
 
+extern Byte x, y;
+
 void * get_ebp();
 
 int check_fd(int fd, int permissions)
@@ -241,14 +243,28 @@ int sys_get_stats(int pid, struct stats *st)
 
 int sys_read(char *b, int maxchars)
 {
-  //Parameter checking
-  if(maxchars < 0) {
-    return -EINVAL;
-  }
-  if(!access_ok(VERIFY_WRITE, b, sizeof(char))) {
-    return -EFAULT;
-  }
-  
-  //We read the buffer
-  return read_keys(b, maxchars);
+	//Parameter checking
+	if(maxchars < 0) {
+		return -EINVAL;
+	}
+	if(!access_ok(VERIFY_WRITE, b, sizeof(char))) {
+		return -EFAULT;
+	}
+
+	//We read the buffer
+	return read_keys(b, maxchars);
+}
+
+int sys_gotoxy(int px, int py)
+{
+	//Parameter checking
+	if(px >= NUM_ROWS || py >= NUM_COLUMNS || px < 0 || py < 0) {
+		return -EINVAL;
+	}
+	
+	//We go to the position (px,py) of the screen
+	x = (Byte)px;
+	y = (Byte)py;
+	
+	return 0;
 }
