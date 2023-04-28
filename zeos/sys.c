@@ -241,13 +241,14 @@ int sys_get_stats(int pid, struct stats *st)
 
 int sys_read(char *b, int maxchars)
 {
+  //Parameter checking
+  if(maxchars < 0) {
+    return -EINVAL;
+  }
   if(!access_ok(VERIFY_WRITE, b, sizeof(char))) {
     return -EFAULT;
   }
   
-  int ret = read_keys(b, maxchars);
-  if(ret < 0) {
-    return -EINVAL;
-  }
-  return ret;
+  //We read the buffer
+  return read_keys(b, maxchars);
 }
