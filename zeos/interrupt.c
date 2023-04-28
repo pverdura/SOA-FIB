@@ -6,6 +6,7 @@
 #include <segment.h>
 #include <hardware.h>
 #include <io.h>
+#include <keyboard.h>
 
 #include <sched.h>
 
@@ -45,7 +46,10 @@ void keyboard_routine()
 {
   unsigned char c = inb(0x60);
   
-  if (c&0x80) printc_xy(0, 0, char_map[c&0x7f]);
+  //We add the pressed key to the buffer
+  if(c&0x80) write_key(char_map[c&0x7f]);
+  
+  //if (c&0x80) printc_xy(0, 0, char_map[c&0x7f]);
 }
 
 void itoa(int a, char *b);
