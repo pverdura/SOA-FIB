@@ -10,7 +10,7 @@ ENTRY (sys_call_table)
 	.long sys_read		//5
 	.long sys_ni_syscall	//6
 	.long sys_gotoxy	//7
-	.long sys_ni_syscall	//8
+	.long sys_set_color	//8
 	.long sys_ni_syscall	//9
 	.long sys_gettime	//10
 	.long sys_ni_syscall	//11

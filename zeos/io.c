@@ -11,6 +11,7 @@
 /**************/
 
 Byte x, y=19;
+int color = 0x0200;
 
 /* Read a byte from 'port' */
 Byte inb (unsigned short port)
@@ -31,7 +32,7 @@ void printc(char c)
   }
   else
   {
-    Word ch = (Word) (c & 0x00FF) | 0x0200;
+    Word ch = (Word) (c & 0x0000FF) | (Word) (color);
 	Word *screen = (Word *)0xb8000;
 	screen[(y * NUM_COLUMNS + x)] = ch;
     if (++x >= NUM_COLUMNS)

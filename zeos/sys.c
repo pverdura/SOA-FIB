@@ -23,6 +23,7 @@
 #define ESCRIPTURA 1
 
 extern Byte x, y;
+extern int color;
 
 void * get_ebp();
 
@@ -262,9 +263,22 @@ int sys_gotoxy(int px, int py)
 		return -EINVAL;
 	}
 	
-	//We go to the position (px,py) of the screen
-	x = (Byte)px;
-	y = (Byte)py;
+	//We go to the position (x,y) of the screen
+	x = px;
+	y = py;
+	
+	return 0;
+}
+
+int sys_set_color(int fg, int bg)
+{
+	//Parameter checking
+	if(fg > 0xff || bg > 0xff || fg < 0 || bg < 0) {
+		return -EINVAL;
+	} 
+	
+	//We change the foreground to fg color and the background to bg color
+	color = (fg << 8)+(bg << 10);
 	
 	return 0;
 }
