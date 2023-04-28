@@ -20,13 +20,7 @@ void init_buffer();
 /* Adds the pressed key to the copy buffer */
 void write_key(char c);
 
-/* Reads the lasts maxchars writen keys to b
- * Pre: -
- * Post: 1 if maxchars was bigger than the buffer size
- *         or maxchars < 0
- *         or maxchars > num_writes
- *       else the number of read keys
- */
+/* Reads the lasts maxchars writen keys to b */
 int read_keys(char* b, int maxchars);
 
 #endif /* __KEYBOARD_H__ */

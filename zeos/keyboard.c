@@ -32,17 +32,15 @@ void write_key(char c)
 
 int read_keys(char* b, int maxchars)
 {		
-	//We check that maxchars is less than the buffer size
-	if(maxchars > BUFFER_SIZE ||
-	   maxchars < 0 ||
-	   maxchars > keystrokes.num_writes) return -1;
+	int i;
 	
-	// We copy the last keys to b
-	for(int i = 0; i < maxchars; ++i)
+	//We check that the number of read elements is less or equal than the buffer 
+	//size and the number of writen elements
+	for(i = 0; i < maxchars && i < BUFFER_SIZE && i < keystrokes.num_writes; ++i)
 	{
 		int pos = (keystrokes.p_read+i)%BUFFER_SIZE;
-		*(b+pos) = keystrokes.buffer[keystrokes.p_read];
+		*(b+pos) = keystrokes.buffer[keystrokes.p_read+i];
 	}
 	
-	return 0;	
+	return i;	
 }
