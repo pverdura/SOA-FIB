@@ -17,6 +17,8 @@
 
 #include <errno.h>
 
+#include <keyboard.h>
+
 #define LECTURA 0
 #define ESCRIPTURA 1
 
@@ -235,4 +237,17 @@ int sys_get_stats(int pid, struct stats *st)
     }
   }
   return -ESRCH; /*ESRCH */
+}
+
+int sys_read(char *b, int maxchars)
+{
+  if(!access_ok(VERIFY_WRITE, b, sizeof(char))) {
+    return -EFAULT;
+  }
+  
+  int ret = read_keys(b, maxchars);
+  if(ret < 0) {
+    return -EINVAL;
+  }
+  return ret;
 }

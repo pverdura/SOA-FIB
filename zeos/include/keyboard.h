@@ -22,10 +22,10 @@ void write_key(char c);
 
 /* Reads the lasts maxchars writen keys to b
  * Pre: -
- * Post: 0 if it was copied succesfullu¡y,
- *      -1 if maxchars was bigger than the buffer size
+ * Post: 1 if maxchars was bigger than the buffer size
  *         or maxchars < 0
  *         or maxchars > num_writes
+ *       else the number of read keys
  */
 int read_keys(char* b, int maxchars);
 
