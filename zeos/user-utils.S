@@ -107,7 +107,7 @@ ENTRY(read)
 	pushl %ebx;   // Save EBX, ESI and EDI if modified
 	movl $5, %eax
 	movl 0x8(%ebp), %ebx; //b
-	movl 0xC(%esp), %ecx; //maxchars
+	movl 0xC(%ebp), %ecx; //maxchars
 	call syscall_sysenter
 	popl %ebx
 	test %eax, %eax
@@ -122,7 +122,7 @@ ENTRY(gotoxy)
 	pushl %ebx;   // Save EBX, ESI and EDI if modified
 	movl $7, %eax
 	movl 0x8(%ebp), %ebx; //x
-	movl 0xC(%esp), %ecx; //y
+	movl 0xC(%ebp), %ecx; //y
 	call syscall_sysenter
 	popl %ebx
 	test %eax, %eax
@@ -137,7 +137,7 @@ ENTRY(set_color)
 	pushl %ebx;   // Save EBX, ESI and EDI if modified
 	movl $8, %eax
 	movl 0x8(%ebp), %ebx; //fg
-	movl 0xC(%esp), %ecx; //bg
+	movl 0xC(%ebp), %ecx; //bg
 	call syscall_sysenter
 	popl %ebx
 	test %eax, %eax
