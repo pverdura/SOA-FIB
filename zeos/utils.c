@@ -86,6 +86,11 @@ int access_ok(int type, const void * addr, unsigned long size)
 }
 
 
+int usr_addr_ok(void* addr)
+{
+    return ((int)addr > (PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE && (int)addr % PAGE_SIZE == 0);
+}
+
 #define CYCLESPERTICK 109000
 
 /*

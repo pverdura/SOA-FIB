@@ -9,6 +9,8 @@ int copy_to_user(void *start, void *dest, int size);
 #define VERIFY_WRITE	1
 int access_ok(int type, const void *addr, unsigned long size);
 
+int usr_addr_ok(void* addr);
+
 #define min(a,b)	(a<b?a:b)
 
 unsigned long get_ticks(void);

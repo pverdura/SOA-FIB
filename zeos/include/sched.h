@@ -13,6 +13,7 @@
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
+#define NR_SHARED_FRAMES 10
 
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 
@@ -76,5 +77,10 @@ int needs_sched_rr();
 void update_sched_data_rr();
 
 void init_stats(struct stats *s);
+
+void init_shm_frames();
+int get_shm_frame(int id);
+int addr_empty(void* addr);
+int get_empty_addr();
 
 #endif  /* __SCHED_H__ */

@@ -273,7 +273,7 @@ int sys_gotoxy(int px, int py)
 int sys_set_color(int fg, int bg)
 {
 	//Parameter checking
-	if(fg > 0xff || bg > 0xff || fg < 0 || bg < 0) {
+	if(fg > 0xf || bg > 0xf || fg < 0 || bg < 0) {
 		return -EINVAL;
 	} 
 	
@@ -281,4 +281,35 @@ int sys_set_color(int fg, int bg)
 	color = (fg * 0x100)+(bg * 0x1000);
 	
 	return 0;
+}
+
+int sys_shmat(int id, void* addr)
+{
+	//Parameter checking
+	if(id < 0 || id > NR_SHARED_FRAMES) {
+		return -EINVAL;
+	}
+	if(addr == NULL || usr_addr_ok(addr)) {
+		
+		//We check if we have to get a new address
+		if(addr == NULL || !addr_empty(addr)) {
+			//We get an empty usr addr
+			int new_addr = get_empty_addr();
+			
+			//We check if there was empty pages
+			if(new_addr < 0) {
+				return -ENOMEM;
+			}
+			addr = (void*)new_addr;
+		}
+		//We get the desired frame
+		int frame = get_shm_frame(id);
+		
+		//We map the address to the frame
+		set_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE, frame);
+	}
+	else {
+		return -EFAULT;
+	}
+	return (int)addr;
 }

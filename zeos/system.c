@@ -95,13 +95,16 @@ int __attribute__((__section__(".text.main")))
   init_idle();
   /* Initialize task 1 data */
   init_task1();
-
-  /* Move user code/data now (after the page table initialization) */
-  copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
-
+  
+  /* Initialize frames that will be used to share memory space between processes */
+  init_shm_frames();
+  
   /* Inicialitzem el buffer de teclat */
   init_buffer();
 
+  /* Move user code/data now (after the page table initialization) */
+  copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
+  
   printk("Entering user mode...");
 
   enable_int();

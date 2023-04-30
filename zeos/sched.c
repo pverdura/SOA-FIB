@@ -264,3 +264,40 @@ void force_task_switch()
 
   sched_next_rr();
 }
+
+
+/* Frames that will be used to share memory space between processes */
+int shm_frames[NR_SHARED_FRAMES];
+
+void init_shm_frames()
+{
+	for(int i = 0; i < NR_SHARED_FRAMES; ++i) {
+		shm_frames[i] = alloc_frame();
+	}
+}
+
+int get_shm_frame(int id)
+{
+	return shm_frames[id];
+}
+
+int addr_empty(void* addr)
+{
+	page_table_entry* PT = get_PT(current());
+	return PT[(int)addr/PAGE_SIZE].entry;
+}
+
+int get_empty_addr()
+{
+	page_table_entry* PT = get_PT(current());
+	int min = PAG_LOG_INIT_DATA+NUM_PAG_DATA;
+	int max = TOTAL_PAGES-1;
+	int addr;
+	
+	while(min < max) {
+		addr = (min+max)/2;
+		if(PT[addr].entry == 0) max = addr;
+		else min = addr+1;
+	}
+	return addr*PAGE_SIZE;
+}
