@@ -313,3 +313,14 @@ int sys_shmat(int id, void* addr)
 	}
 	return (int)addr;
 }
+
+int sys_shmdt(void* addr)
+{
+	//Parameter checking
+	if(addr == NULL || !shm_addr(addr)) {
+		return -EFAULT;
+	}
+	del_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE);
+	set_cr3(get_DIR(current()));	//We flush the TLB
+	return 0;
+}

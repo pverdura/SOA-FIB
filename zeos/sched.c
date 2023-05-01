@@ -301,3 +301,13 @@ int get_empty_addr()
 	}
 	return addr*PAGE_SIZE;
 }
+
+int shm_addr(void* addr)
+{
+	int frame = get_frame(get_PT(current()),(int)addr/PAGE_SIZE);
+	
+	for(int i = 0; i < NR_SHARED_FRAMES; ++i) {
+		if(frame == shm_frames[i]) return 1;
+	}
+	return 0;
+}

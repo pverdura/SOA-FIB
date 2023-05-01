@@ -82,5 +82,7 @@ void init_shm_frames();
 int get_shm_frame(int id);
 int addr_empty(void* addr);
 int get_empty_addr();
+int shm_addr(void* addr);
+
 
 #endif  /* __SCHED_H__ */
