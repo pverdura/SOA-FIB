@@ -15,19 +15,17 @@ void init_buffer()
 
 void write_key(char c)
 {
-	//We write at position p_write the character c
-	keystrokes.buffer[keystrokes.p_write] = c;
-	
-	//We increase the writing position
-	keystrokes.p_write = (keystrokes.p_write+1)%BUFFER_SIZE;
-	
-	//We increase the reading position (if needed)
-	if(keystrokes.num_writes >= BUFFER_SIZE) {
-		keystrokes.p_read = (keystrokes.p_read+1)%BUFFER_SIZE;
+	//We check if we have enough space
+	if(keystrokes.num_writes < BUFFER_SIZE) {
+		//We write at position p_write the character c
+		keystrokes.buffer[keystrokes.p_write] = c;
+		
+		//We increase the writing position
+		keystrokes.p_write = (keystrokes.p_write+1)%BUFFER_SIZE;
+			
+		//We increase the number of writes
+		keystrokes.num_writes++;
 	}
-	
-	//We increase the number of writes
-	keystrokes.num_writes++;
 }
 
 int read_keys(char* b, int maxchars)
@@ -39,8 +37,9 @@ int read_keys(char* b, int maxchars)
 	for(i = 0; i < maxchars && i < BUFFER_SIZE && i < keystrokes.num_writes; ++i)
 	{
 		int pos = (keystrokes.p_read+i)%BUFFER_SIZE;
-		*(b+pos) = keystrokes.buffer[keystrokes.p_read+i];
+		*(b+i) = keystrokes.buffer[pos];
 	}
-	
+	keystrokes.num_writes -= i;
+	keystrokes.p_read = (keystrokes.p_read+i)%BUFFER_SIZE;
 	return i;	
 }
