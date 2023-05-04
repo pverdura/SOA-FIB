@@ -80,9 +80,13 @@ void init_stats(struct stats *s);
 
 void init_shm_frames();
 int get_shm_frame(int id);
+void ref_shm_frame(int id);
+void deref_shm_frame(int frame);
+int num_refs_shm(int id);
 int addr_empty(void* addr);
 int get_empty_addr();
 int shm_addr(void* addr);
+void mark_frame(int id);
 
 
 #endif  /* __SCHED_H__ */

@@ -283,11 +283,11 @@ int sys_set_color(int fg, int bg)
 	return 0;
 }
 
-int sys_shmat(int id, void* addr)
+void* sys_shmat(int id, void* addr)
 {
 	//Parameter checking
 	if(id < 0 || id > NR_SHARED_FRAMES) {
-		return -EINVAL;
+		return (void*)(-EINVAL);
 	}
 	if(addr == NULL || usr_addr_ok(addr)) {
 		
@@ -298,7 +298,7 @@ int sys_shmat(int id, void* addr)
 			
 			//We check if there was empty pages
 			if(new_addr < 0) {
-				return -ENOMEM;
+				return (void*)(-ENOMEM);
 			}
 			addr = (void*)new_addr;
 		}
@@ -309,9 +309,9 @@ int sys_shmat(int id, void* addr)
 		set_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE, frame);
 	}
 	else {
-		return -EFAULT;
+		return (void*)(-EFAULT);
 	}
-	return (int)addr;
+	return addr;
 }
 
 int sys_shmdt(void* addr)
@@ -320,7 +320,23 @@ int sys_shmdt(void* addr)
 	if(addr == NULL || !shm_addr(addr)) {
 		return -EFAULT;
 	}
+	
+	//We unmap the frame to the address addr
+	deref_shm_frame(get_frame(get_PT(current()), (int)addr/PAGE_SIZE));
 	del_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE);
 	set_cr3(get_DIR(current()));	//We flush the TLB
+	
+	return 0;
+}
+
+int sys_shmrm(int id)
+{
+	//Parameter checking
+	if(id < 0 || id > NR_SHARED_FRAMES) {
+		return -EINVAL;
+	}
+	
+	//We mark the frame to be cleared (set all to '0')
+	mark_frame(id);
 	return 0;
 }

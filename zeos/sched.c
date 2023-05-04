@@ -267,47 +267,85 @@ void force_task_switch()
 
 
 /* Frames that will be used to share memory space between processes */
-int shm_frames[NR_SHARED_FRAMES];
+struct {
+	int frame;
+	int num_refs;
+	int clean_mark;
+} shm_frames[NR_SHARED_FRAMES];
 
+/* Initializes the frames */
 void init_shm_frames()
 {
 	for(int i = 0; i < NR_SHARED_FRAMES; ++i) {
-		shm_frames[i] = alloc_frame();
+		shm_frames[i].frame = alloc_frame();
+		shm_frames[i].num_refs = 0;
+		shm_frames[i].clean_mark = 0;
 	}
 }
 
+/* Returns the frame from the identifier */
 int get_shm_frame(int id)
 {
-	return shm_frames[id];
+	return shm_frames[id].frame;
 }
 
+/* Increments the number of references of the frame id */
+void ref_shm_frame(int id)
+{
+	shm_frames[id].num_refs++;
+}
+
+/* Decrements the number of references if the frame */
+void deref_shm_frame(int frame)
+{
+	for(int id = 0; id < NR_SHARED_FRAMES; ++id) {
+		if(frame == shm_frames[id].frame) {
+			shm_frames[id].num_refs--;
+			break;
+		}
+	}
+}
+
+/* Returns the number of references the frame id has */
+int num_refs_shm(int id)
+{
+	return shm_frames[id].num_refs;
+}
+
+/* Returns if the address addr is empty */
 int addr_empty(void* addr)
 {
 	page_table_entry* PT = get_PT(current());
 	return PT[(int)addr/PAGE_SIZE].entry;
 }
 
+/* Gets an empty address page aligned */
 int get_empty_addr()
 {
 	page_table_entry* PT = get_PT(current());
-	int min = PAG_LOG_INIT_DATA+NUM_PAG_DATA;
-	int max = TOTAL_PAGES-1;
-	int addr;
+	int i;
 	
-	while(min < max) {
-		addr = (min+max)/2;
-		if(PT[addr].entry == 0) max = addr;
-		else min = addr+1;
+	for(i = PAG_LOG_INIT_DATA+NUM_PAG_DATA; i < TOTAL_PAGES; ++i) {
+		if(PT[i].entry == 0) {
+			break;
+		}
 	}
-	return addr*PAGE_SIZE;
+	return i*PAGE_SIZE;
 }
 
+/* Checks if the address is from a shared memory space */
 int shm_addr(void* addr)
 {
 	int frame = get_frame(get_PT(current()),(int)addr/PAGE_SIZE);
 	
 	for(int i = 0; i < NR_SHARED_FRAMES; ++i) {
-		if(frame == shm_frames[i]) return 1;
+		if(frame == shm_frames[i].frame) return 1;
 	}
 	return 0;
+}
+
+/* Marks the frame to be cleared when there is no mapped entries */
+void mark_frame(int id)
+{
+	shm_frames[id].clean_mark = 1;
 }

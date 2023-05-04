@@ -19,7 +19,7 @@ ENTRY (sys_call_table)
 	.long sys_ni_syscall	//14
 	.long sys_shmat		//15
 	.long sys_shmdt		//16
-	.long sys_ni_syscall	//17
+	.long sys_shmrm	//17
 	.long sys_ni_syscall	//18
 	.long sys_ni_syscall	//19
 	.long sys_getpid	//20	
