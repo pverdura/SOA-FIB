@@ -342,14 +342,16 @@ int addr_empty(void* addr)
 int get_empty_addr()
 {
 	page_table_entry* PT = get_PT(current());
-	int i;
 	
-	for(i = PAG_LOG_INIT_DATA+NUM_PAG_DATA; i < TOTAL_PAGES; ++i) {
-		if(PT[i].entry == 0) {
-			break;
+	//We look for an empty page
+	for(int i = PAG_LOG_INIT_DATA+NUM_PAG_DATA; i < TOTAL_PAGES; ++i) {
+		if(PT[i].entry == 0) {	
+			return i*PAGE_SIZE;
 		}
 	}
-	return i*PAGE_SIZE;
+	
+	//There's no free addres, so we return an error
+	return -1;
 }
 
 /* Checks if the address is from a shared memory space */
