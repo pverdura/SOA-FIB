@@ -85,10 +85,10 @@ int access_ok(int type, const void * addr, unsigned long size)
   return 0;
 }
 
-
+/* Checks if the address 'addr' is a valid addres for a user page */
 int usr_addr_ok(void* addr)
 {
-    return ((int)addr > (PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE && (int)addr % PAGE_SIZE == 0);
+    return (((int)addr >= (PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE) && (int)addr % PAGE_SIZE == 0);
 }
 
 #define CYCLESPERTICK 109000
