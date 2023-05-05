@@ -298,18 +298,15 @@ void ref_shm_frame(int id)
 /* Set the whole frame content to '0' if possible */
 void clean_frame(int id)
 {
-	//We check if the frame is marked and has no references
-	if(shm_frames[id].clean_mark && shm_frames[id].num_refs == 0) {
-		int* addr = (int*)shm_frames[id].frame; 
+	int* addr = (int*)shm_frames[id].frame; 
 		
-		//We clean the frame (set to 0)
-		for(int i = 0; i < PAGE_SIZE; ++i) {
-			*(addr+i) = 0;
-		}
-						
-		//We remove the mark
-		shm_frames[id].clean_mark = 0;
+	//We clean the frame (set to 0)
+	for(int i = 0; i < PAGE_SIZE; ++i) {
+		*(addr+i) = 0;
 	}
+					
+	//We remove the mark
+	shm_frames[id].clean_mark = 0;
 }
 
 /* Decrements the number of references if the frame */
@@ -319,8 +316,10 @@ void deref_shm_frame(int frame)
 		if(frame == shm_frames[id].frame) {
 			shm_frames[id].num_refs--;
 			
-			//We clear the frame if it's possible
-			clean_frame(id);
+			//We clean the frame if it's possible
+			if(shm_frames[id].clean_mark && shm_frames[id].num_refs == 0) {
+				clean_frame(id);
+			}
 			return;
 		}
 	}
@@ -368,5 +367,7 @@ int shm_addr(void* addr)
 void mark_frame(int id)
 {
 	shm_frames[id].clean_mark = 1;
-	clean_frame(id);
+	if(shm_frames[id].num_refs == 0) {
+		clean_frame(id);
+	}
 }
