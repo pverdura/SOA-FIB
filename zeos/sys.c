@@ -292,7 +292,7 @@ void* sys_shmat(int id, void* addr)
 	if(addr == NULL || usr_addr_ok(addr)) {
 		
 		//We check if we have to get a new address
-		if(addr == NULL || !addr_empty(addr)) {
+		if(addr == NULL || used_addr(addr)) {
 			//We get an empty usr addr
 			int new_addr = get_empty_addr();
 			

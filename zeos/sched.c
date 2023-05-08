@@ -331,8 +331,8 @@ int num_refs_shm(int id)
 	return shm_frames[id].num_refs;
 }
 
-/* Returns if the address addr is empty */
-int addr_empty(void* addr)
+/* Checks if the address addr is used */
+int used_addr(void* addr)
 {
 	page_table_entry* PT = get_PT(current());
 	return PT[(int)addr/PAGE_SIZE].entry;
