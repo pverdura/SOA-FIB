@@ -83,7 +83,7 @@ int get_shm_frame(int id);
 void ref_shm_frame(int id);
 void deref_shm_frame(int frame);
 int num_refs_shm(int id);
-int used_addr(void* addr);
+int addr_empty(void* addr);
 int get_empty_addr();
 int shm_addr(void* addr);
 void mark_frame(int id);
