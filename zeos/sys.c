@@ -204,6 +204,14 @@ void sys_exit()
     free_frame(get_frame(process_PT, PAG_LOG_INIT_DATA+i));
     del_ss_pag(process_PT, PAG_LOG_INIT_DATA+i);
   }
+  // Deallocate shared frames
+  for (int PL=PAG_LOG_INIT_DATA+NUM_PAG_DATA; PL<TOTAL_PAGES; ++PL)
+  {
+  	if(shm_addr((void*)PL)) {
+  		int shm_frame = get_frame(get_PT(current()),PL);
+  		deref_shm_frame(shm_frame);
+  	}
+  }
   
   /* Free task_struct */
   list_add_tail(&(current()->list), &freequeue);

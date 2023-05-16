@@ -335,7 +335,7 @@ int num_refs_shm(int id)
 int used_addr(void* addr)
 {
 	page_table_entry* PT = get_PT(current());
-	return PT[(int)addr/PAGE_SIZE].entry;
+	return get_frame(PT, (int)addr/PAGE_SIZE);
 }
 
 /* Gets an empty address page aligned */
