@@ -106,9 +106,17 @@ int sys_fork(void)
       return -EAGAIN; 
     }
   }
+  
+  /* Allocate shared frames from the parent */
+  page_table_entry *parent_PT = get_PT(current());
+  for(pag = NUM_PAG_KERNEL+NUM_PAG_CODE+NUM_PAG_DATA; pag < TOTAL_PAGES; ++pag) {
+  	/* We check if the page uses a shared frame */
+  	if(shm_addr((void*)(pag*PAGE_SIZE))) {
+  		set_ss_pag(process_PT, pag, get_frame(parent_PT, pag));
+  	}
+  } 
 
   /* Copy parent's SYSTEM and CODE to child. */
-  page_table_entry *parent_PT = get_PT(current());
   for (pag=0; pag<NUM_PAG_KERNEL; pag++)
   {
     set_ss_pag(process_PT, pag, get_frame(parent_PT, pag));
@@ -120,10 +128,18 @@ int sys_fork(void)
   /* Copy parent's DATA to child. We will use TOTAL_PAGES-1 as a temp logical page to map to */
   for (pag=NUM_PAG_KERNEL+NUM_PAG_CODE; pag<NUM_PAG_KERNEL+NUM_PAG_CODE+NUM_PAG_DATA; pag++)
   {
+  	/* We get a temporat page */
+    int copy_page = pag+NUM_PAG_DATA;
+    
+    /* We check it's not used */
+  	while(get_frame(parent_PT, copy_page) != FREE_FRAME) {
+  		++copy_page;
+  	}
+  
     /* Map one child page to parent's address space. */
-    set_ss_pag(parent_PT, pag+NUM_PAG_DATA, get_frame(process_PT, pag));
-    copy_data((void*)(pag<<12), (void*)((pag+NUM_PAG_DATA)<<12), PAGE_SIZE);
-    del_ss_pag(parent_PT, pag+NUM_PAG_DATA);
+    set_ss_pag(parent_PT, copy_page, get_frame(process_PT, pag));
+    copy_data((void*)(pag<<12), (void*)(copy_page<<12), PAGE_SIZE);
+    del_ss_pag(parent_PT, copy_page);
   }
   /* Deny access to the child's memory space */
   set_cr3(get_DIR(current()));
