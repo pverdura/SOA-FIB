@@ -302,7 +302,7 @@ void clean_frame(int id)
 		
 	//We clean the frame (set to 0)
 	for(int i = 0; i < PAGE_SIZE; ++i) {
-		*(addr+i) = 0;
+		addr[i] = 0;
 	}
 					
 	//We remove the mark

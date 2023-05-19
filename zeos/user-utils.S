@@ -166,8 +166,21 @@ ENTRY(shmdt)
 	movl %esp, %ebp
 	pushl %ebx;   // Save EBX, ESI and EDI if modified
 	movl $16, %eax
-	movl 0x8(%ebp), %ebx; //fg
-	movl 0xC(%ebp), %ecx; //bg
+	movl 0x8(%ebp), %ebx; //addr
+	call syscall_sysenter
+	popl %ebx
+	test %eax, %eax
+	js nok  // if (eax < 0) -->
+	popl %ebp
+	ret
+
+/* int shmrm(int id) */	
+ENTRY(shmrm)
+	pushl %ebp
+	movl %esp, %ebp
+	pushl %ebx;   // Save EBX, ESI and EDI if modified
+	movl $17, %eax
+	movl 0x8(%ebp), %ebx; //id
 	call syscall_sysenter
 	popl %ebx
 	test %eax, %eax
