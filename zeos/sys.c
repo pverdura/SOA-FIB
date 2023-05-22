@@ -107,14 +107,20 @@ int sys_fork(void)
     }
   }
   
-  /* Allocate shared frames from the parent */
+  /******************* Allocate shared frames from the parent *******************/
   page_table_entry *parent_PT = get_PT(current());
   for(pag = NUM_PAG_KERNEL+NUM_PAG_CODE+NUM_PAG_DATA; pag < TOTAL_PAGES; ++pag) {
+  	
   	/* We check if the page uses a shared frame */
-  	if(shm_addr((void*)(pag*PAGE_SIZE))) {
-  		set_ss_pag(process_PT, pag, get_frame(parent_PT, pag));
+  	if(used_addr((void*)(pag*PAGE_SIZE)) && shm_addr((void*)(pag*PAGE_SIZE))) {
+  		int shm_frame = get_frame(parent_PT, pag);
+  		set_ss_pag(process_PT, pag, shm_frame);
+  		
+  		int id = get_shm_id(shm_frame);
+  		increment_ref(id);
   	}
   } 
+  /******************************************************************************/
 
   /* Copy parent's SYSTEM and CODE to child. */
   for (pag=0; pag<NUM_PAG_KERNEL; pag++)
@@ -220,14 +226,15 @@ void sys_exit()
     free_frame(get_frame(process_PT, PAG_LOG_INIT_DATA+i));
     del_ss_pag(process_PT, PAG_LOG_INIT_DATA+i);
   }
-  // Deallocate shared frames
-  for (int PL=PAG_LOG_INIT_DATA+NUM_PAG_DATA; PL<TOTAL_PAGES; ++PL)
+  /************************** Deallocate shared frames **************************/
+  for (int pag=PAG_LOG_INIT_DATA+NUM_PAG_DATA; pag<TOTAL_PAGES; ++pag)
   {
-  	if(shm_addr((void*)PL)) {
-  		int shm_frame = get_frame(get_PT(current()),PL);
-  		deref_shm_frame(shm_frame);
+  	if(used_addr((void*)(pag*PAGE_SIZE)) && shm_addr((void*)(pag*PAGE_SIZE))) {
+  		int shm_frame = get_frame(get_PT(current()),pag);
+  		decrement_ref(shm_frame);
   	}
   }
+  /******************************************************************************/
   
   /* Free task_struct */
   list_add_tail(&(current()->list), &freequeue);
@@ -331,6 +338,7 @@ void* sys_shmat(int id, void* addr)
 		
 		//We map the address to the frame
 		set_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE, frame);
+		increment_ref(id);
 	}
 	else {
 		return (void*)(-EFAULT);
@@ -346,8 +354,8 @@ int sys_shmdt(void* addr)
 	}
 	
 	//We unmap the frame to the address addr
-	deref_shm_frame(get_frame(get_PT(current()), (int)addr/PAGE_SIZE));
 	del_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE);
+	decrement_ref(get_frame(get_PT(current()), (int)addr/PAGE_SIZE));
 	set_cr3(get_DIR(current()));	//We flush the TLB
 	
 	return 0;

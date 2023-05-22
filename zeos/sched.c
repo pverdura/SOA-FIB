@@ -289,8 +289,19 @@ int get_shm_frame(int id)
 	return shm_frames[id].frame;
 }
 
+/* Returns the id of the shared frame 'frame' */
+int get_shm_id(int frame)
+{
+	for(int id = 0; id < NR_SHARED_FRAMES; ++id) {
+		if(frame == shm_frames[id].frame) {
+			return id;
+		}
+	}
+	return -1;
+}
+
 /* Increments the number of references of the frame id */
-void ref_shm_frame(int id)
+void increment_ref(int id)
 {
 	shm_frames[id].num_refs++;
 }
@@ -310,7 +321,7 @@ void clean_frame(int id)
 }
 
 /* Decrements the number of references if the frame */
-void deref_shm_frame(int frame)
+void decrement_ref(int frame)
 {
 	for(int id = 0; id < NR_SHARED_FRAMES; ++id) {
 		if(frame == shm_frames[id].frame) {

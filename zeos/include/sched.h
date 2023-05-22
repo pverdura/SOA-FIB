@@ -80,8 +80,9 @@ void init_stats(struct stats *s);
 
 void init_shm_frames();
 int get_shm_frame(int id);
-void ref_shm_frame(int id);
-void deref_shm_frame(int frame);
+int get_shm_id(int addr);
+void increment_ref(int id);
+void decrement_ref(int frame);
 int num_refs_shm(int id);
 int used_addr(void* addr);
 int get_empty_addr();
