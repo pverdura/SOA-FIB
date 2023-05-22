@@ -306,16 +306,14 @@ void increment_ref(int id)
 	shm_frames[id].num_refs++;
 }
 
-/* Set the whole frame content to '0' if possible */
-void clean_frame(int id)
+/* Sets the whole frame content to 0 */
+void clean_frame(int* pag, int id)
 {
-	int* addr = (int*)shm_frames[id].frame; 
-		
 	//We clean the frame (set to 0)
 	for(int i = 0; i < PAGE_SIZE; ++i) {
-		addr[i] = 0;
+		*(pag+i) = 0;
 	}
-					
+	
 	//We remove the mark
 	shm_frames[id].clean_mark = 0;
 }
@@ -324,12 +322,14 @@ void clean_frame(int id)
 void decrement_ref(int frame)
 {
 	for(int id = 0; id < NR_SHARED_FRAMES; ++id) {
+		//We check if the frames maches
 		if(frame == shm_frames[id].frame) {
+			//We decrement the number of references
 			shm_frames[id].num_refs--;
 			
 			//We clean the frame if it's possible
 			if(shm_frames[id].clean_mark && shm_frames[id].num_refs == 0) {
-				clean_frame(id);
+				clean_frame((int*)(frame*PAGE_SIZE), id);
 			}
 			return;
 		}
@@ -380,7 +380,4 @@ int shm_addr(void* addr)
 void mark_frame(int id)
 {
 	shm_frames[id].clean_mark = 1;
-	if(shm_frames[id].num_refs == 0) {
-		clean_frame(id);
-	}
 }

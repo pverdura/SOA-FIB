@@ -353,9 +353,12 @@ int sys_shmdt(void* addr)
 		return -EFAULT;
 	}
 	
+	int pag = (int)addr/PAGE_SIZE;
+	int frame = get_frame(get_PT(current()), pag);
+	
 	//We unmap the frame to the address addr
-	del_ss_pag(get_PT(current()), (int)addr/PAGE_SIZE);
-	decrement_ref(get_frame(get_PT(current()), (int)addr/PAGE_SIZE));
+	del_ss_pag(get_PT(current()), pag);
+	decrement_ref(frame);
 	set_cr3(get_DIR(current()));	//We flush the TLB
 	
 	return 0;
