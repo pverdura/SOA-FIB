@@ -15,6 +15,8 @@
 Gate idt[IDT_ENTRIES];
 Register    idtR;
 
+void itoa(int a, char *b);
+
 char char_map[] =
 {
   '\0','\0','1','2','3','4','5','6',
@@ -33,11 +35,31 @@ char char_map[] =
 };
 
 int zeos_ticks = 0;
+int num_frames = 0;
 
 void clock_routine()
 {
   zeos_show_clock();
   zeos_ticks ++;
+  
+  //We check if it passed a second
+  if(zeos_ticks % TICKS_SECOND == 0) {
+  	char fps[30];
+  	int size = 0;
+  	
+  	//We clear the last value
+  	for(int i = 0; i < size+4; ++i) { //Last value + " fps"
+  		printc_xy(0,i,' ');
+  	}
+  	
+  	//We print the fps
+  	itoa(num_frames, fps);
+  	size = printk_xy(0,0,fps);
+  	printk_xy(size+1,0,"fps");
+  	
+  	//We reset the fps
+  	num_frames = 0;
+  }
   
   schedule();
 }
@@ -51,8 +73,6 @@ void keyboard_routine()
   
   //if (c&0x80) printc_xy(0, 0, char_map[c&0x7f]);
 }
-
-void itoa(int a, char *b);
 
 void pf_routine(unsigned long flags, unsigned long eip)
 {	

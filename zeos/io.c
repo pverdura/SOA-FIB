@@ -82,8 +82,9 @@ void printk(char *string)
     printc(string[i]);
 }
 
-void printk_xy(Byte mx, Byte my, char *string)
+int printk_xy(Byte mx, Byte my, char *string)
 {
+	int size = 0;
 	Byte cx, cy;
 	cx = x;
 	cy = y;
@@ -92,8 +93,10 @@ void printk_xy(Byte mx, Byte my, char *string)
 	
 	for(int i = 0; string[i]; ++i) {
 		printc(string[i]);
+		++size;
 	}
 	
 	x = cx;
 	y = cy;
+	return size;
 }
