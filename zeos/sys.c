@@ -24,6 +24,7 @@
 
 extern Byte x, y;
 extern int color;
+extern int num_frames;
 
 void * get_ebp();
 
@@ -203,6 +204,7 @@ int ret;
 		ret = sys_write_console(localbuffer, bytes_left);
 		bytes_left-=ret;
 	}
+	++num_frames;
 	return (nbytes-bytes_left);
 }
 

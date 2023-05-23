@@ -306,13 +306,40 @@ void increment_ref(int id)
 	shm_frames[id].num_refs++;
 }
 
-/* Sets the whole frame content to 0 */
-void clean_frame(int* pag, int id)
+/* Gets an empty address page aligned */
+int get_empty_addr()
 {
-	//We clean the frame (set to 0)
-	for(int i = 0; i < PAGE_SIZE; ++i) {
-		*(pag+i) = 0;
+	page_table_entry* PT = get_PT(current());
+	
+	//We look for an empty page
+	for(int i = PAG_LOG_INIT_DATA+NUM_PAG_DATA; i < TOTAL_PAGES; ++i) {
+		if(PT[i].entry == 0) {	
+			return i*PAGE_SIZE;
+		}
 	}
+	
+	//There's no free addres, so we return an error
+	return -1;
+}
+
+/* Sets the whole frame content to 0 */
+void clean_frame(int frame, int id)
+{
+	//We get a temporal address
+	int pag = get_empty_addr();
+	int *addr = (int*)pag;
+	pag /= PAGE_SIZE;
+	
+	set_ss_pag(get_PT(current()), pag, frame);
+	
+	//We clean the frame (set to 0)
+	for(int i = 0; i < PAGE_SIZE/4; ++i) {
+		*(addr+i) = 0;
+	}
+	
+	//We remove the temoporal address
+	del_ss_pag(get_PT(current()), pag);
+	set_cr3(get_DIR(current()));
 	
 	//We remove the mark
 	shm_frames[id].clean_mark = 0;
@@ -329,7 +356,7 @@ void decrement_ref(int frame)
 			
 			//We clean the frame if it's possible
 			if(shm_frames[id].clean_mark && shm_frames[id].num_refs == 0) {
-				clean_frame((int*)(frame*PAGE_SIZE), id);
+				clean_frame(frame, id);
 			}
 			return;
 		}
@@ -347,22 +374,6 @@ int used_addr(void* addr)
 {
 	page_table_entry* PT = get_PT(current());
 	return get_frame(PT, (int)addr/PAGE_SIZE);
-}
-
-/* Gets an empty address page aligned */
-int get_empty_addr()
-{
-	page_table_entry* PT = get_PT(current());
-	
-	//We look for an empty page
-	for(int i = PAG_LOG_INIT_DATA+NUM_PAG_DATA; i < TOTAL_PAGES; ++i) {
-		if(PT[i].entry == 0) {	
-			return i*PAGE_SIZE;
-		}
-	}
-	
-	//There's no free addres, so we return an error
-	return -1;
 }
 
 /* Checks if the address is from a shared memory space */
