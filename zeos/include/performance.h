@@ -7,8 +7,6 @@
 
 #define TICKS_SECOND 18
 
-int num_frames = 0;
-
 // Prints the frames per second
 void print_fps();
 

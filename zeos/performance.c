@@ -4,6 +4,8 @@
 #include <performance.h>
 #include <io.h>
 
+int num_frames = 0;
+
 void itoa(int a, char* b);
 
 void print_fps()
