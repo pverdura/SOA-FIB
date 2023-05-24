@@ -7,7 +7,10 @@
 
 #define TICKS_SECOND 18
 
-// Prints the frames per second
+/* Prints the frames per second */
 void print_fps();
 
-#endif /* __PERFORMANCE_H */
+/* Increments the number of frames */
+void inc_fps();
+
+#endif /* __PERFORMANCE_H__ */

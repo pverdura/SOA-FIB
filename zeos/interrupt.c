@@ -7,7 +7,6 @@
 #include <hardware.h>
 #include <io.h>
 #include <keyboard.h>
-#include <performance.h>
 
 #include <sched.h>
 
@@ -41,11 +40,6 @@ void clock_routine()
 {
   zeos_show_clock();
   zeos_ticks ++;
-  
-  //We check if it passed a second
-  if(zeos_ticks % TICKS_SECOND == 0) {
-     print_fps();
-  }
   
   schedule();
 }
