@@ -7,8 +7,6 @@
 
 #include <types.h>
 
-#define TICKS_SECOND 18
-
 DWord get_eflags(void);
 void set_eflags(void);
 void set_idt_reg(Register * idt);

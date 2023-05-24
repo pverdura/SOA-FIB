@@ -7,6 +7,7 @@
 #include <hardware.h>
 #include <io.h>
 #include <keyboard.h>
+#include <performance.h>
 
 #include <sched.h>
 
@@ -35,7 +36,6 @@ char char_map[] =
 };
 
 int zeos_ticks = 0;
-int num_frames = 0;
 
 void clock_routine()
 {
@@ -44,21 +44,7 @@ void clock_routine()
   
   //We check if it passed a second
   if(zeos_ticks % TICKS_SECOND == 0) {
-  	char fps[30];
-  	int size = 0;
-  	
-  	//We clear the last value
-  	for(int i = 0; i < size+4; ++i) { //Last value + " fps"
-  		printc_xy(0,i,' ');
-  	}
-  	
-  	//We print the fps
-  	itoa(num_frames, fps);
-  	size = printk_xy(0,0,fps);
-  	printk_xy(size+1,0,"fps");
-  	
-  	//We reset the fps
-  	num_frames = 0;
+     print_fps();
   }
   
   schedule();
