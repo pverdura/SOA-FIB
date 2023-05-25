@@ -27,7 +27,9 @@ void print_boss(int x, int y);
 void print_heart(int x, int y);
 
 void clear_screen();
+void erase(int x, int y, int sx, int sy);
 
 void display_menu();
+void print_instructions();
 
 #endif /* __GRAPHICS_H__*/

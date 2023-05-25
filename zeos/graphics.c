@@ -275,6 +275,11 @@ void clear_screen()
 	write(1, buff, strlen(buff));
 }
 
+void erease(int x, int y, int sx, int sy)
+{
+	
+}
+
 /*    ####
  *   #
  *    ###
@@ -366,14 +371,18 @@ void print_assignatura()
 void display_menu()
 {
 	char buff[32] = "PRESS 'A' TO START";
+	char ins[32] = "PRESS 'I' FOR INSTRUCTIONS";
 	int s = strlen(buff);
+	int s_ins = strlen(ins);
 	
-	set_color(0xf, 0x8);
+	set_color(0xf, 0x0);
 	gotoxy((MAX_X-s)/2, MAX_Y*4/5);
 	write(1, buff, s);
 	
-	set_color(0xf, 0x0);
-	char name[32] = "SUBESPACIAL OUTER ADVENTURE";
+	gotoxy((MAX_X-s_ins)/2, MAX_Y*4/5+2);
+	write(1, ins, s_ins);
+	
+	char name[32] = "SPACIAL OUTER ADVENTURE";
 	s = strlen(name);
 	gotoxy((MAX_X-s)/2, MAX_Y*3/5+2);
 	write(1, name, s);
@@ -382,12 +391,44 @@ void display_menu()
 	gotoxy((MAX_X-s)/2, MAX_Y*3/5+2);
 	write(1, "S", 1);
 	
-	gotoxy((MAX_X-s)/2 + 12, MAX_Y*3/5+2);
+	gotoxy((MAX_X-s)/2 + 8, MAX_Y*3/5+2);
 	write(1, "O", 1);
 	
-	gotoxy((MAX_X-s)/2 + 18, MAX_Y*3/5+2);
+	gotoxy((MAX_X-s)/2 + 14, MAX_Y*3/5+2);
 	write(1, "A", 1);
 	
 	setColor("red");
 	print_assignatura();
+	
+	//print_spaceship((MAX_X+SPSHP_X)*5/7, (MAX_Y+SPSHP_Y)/2);
+}
+
+void print_instructions()
+{
+	char line1[MAX_X] = "T'HAN ENCARREGAT LA MISSIO DE DERROTAR ELS MALIGNES INoDes (IMPOSTORS";
+	char line2[MAX_X] = "NO DESITJATS), DERROTA TOTS ELS ENEMICS PER GUANYAR!";
+	char line3[MAX_X] = "AJUDA'T DE LES TECLES 'A' i 'D' PER MOURE'T A LA DRETA I ESQUERRA";
+	char line4[MAX_X] = "RESPECTIVAMENT, I PER DISPARAR UTILITZA L'ESPAI";
+	char line5[MAX_X] = "T'ATREVEIXES?";
+	char line6[MAX_X] = "APRETA 'X' PER SORTIR";
+	char line[MAX_X] = "#####################################################################";
+	
+	set_color(0xf, 0x0);
+	gotoxy(5, 3);
+	write(1, line1, strlen(line1));
+	gotoxy(5, 4);
+	write(1, line2, strlen(line2));
+	gotoxy(5, 6);
+	write(1, line3, strlen(line3));
+	gotoxy(5, 7);
+	write(1, line4, strlen(line4));
+	gotoxy(5, 9);
+	write(1, line5, strlen(line5));
+	
+	gotoxy(MAX_X-5-strlen(line6), MAX_Y-1);
+	write(1, line6, strlen(line6));
+	
+	set_color(0x7,0x7);
+	gotoxy((MAX_X-strlen(line))/2, 11);
+	write(1, line, strlen(line));
 }
