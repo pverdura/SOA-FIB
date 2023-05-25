@@ -1,8 +1,10 @@
+/*
+ * graphics.c -
+ */
 #include <graphics.h>
 #include <libc.h>
 
 char* sys_color = " ";
-
 
 void setColor(char* color)
 {
@@ -50,7 +52,9 @@ void print_spaceship(int x, int y)
 	gotoxy(x+4,y);
 	write(1, "#", strlen("#"));
 	gotoxy(x+1,y-1);
-	write(1, "#####", strlen("#####"));
+	write(1, "#", strlen("#"));
+	gotoxy(x+5,y-1);
+	write(1, "#", strlen("#"));
 	gotoxy(x+2,y-2);
 	write(1, "###", strlen("###"));
 	
@@ -255,17 +259,135 @@ void print_rocket_R(int x, int y)
 	write(1, "##", strlen("##"));
 }
 
+// <3
 void print_heart(int x, int y)
 {
-	set_color(0x4,0x0);
+	set_color(0xc,0x0);
 	gotoxy(x,y);
 	write(1, "<3", strlen("<3"));
 }
 
 void clear_screen()
 {
-	setColor("Black");
+	setColor("black");
 	gotoxy(MAX_X, MAX_Y);
 	char buff[28] = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"; 
 	write(1, buff, strlen(buff));
+}
+
+/*    ####
+ *   #
+ *    ###
+ *       #
+ *   ####
+  */
+void print_S()
+{
+	int aux_x = (MAX_X-17)/2;
+	int aux_y = MAX_Y/3;
+	
+	gotoxy(aux_x+1, aux_y);
+	write(1, "####", strlen("####"));
+	gotoxy(aux_x, aux_y+1);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+1, aux_y+2);
+	write(1, "###", strlen("###"));
+	gotoxy(aux_x+4, aux_y+3);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x, aux_y+4);
+	write(1, "####", strlen("####"));
+}
+
+/*    ###
+ *   #   #
+ *   #   #
+ *   #   #
+ *    ###
+ */
+void print_O()
+{
+	int aux_x = (MAX_X-17)/2+6;
+	int aux_y = MAX_Y/3;
+	
+	gotoxy(aux_x+1, aux_y);
+	write(1, "###", strlen("###"));
+	gotoxy(aux_x, aux_y+1);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+1);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x, aux_y+2);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+2);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x, aux_y+3);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+3);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+1, aux_y+4);
+	write(1, "###", strlen("###"));
+}
+
+/*    ###
+ *   #   #
+ *   #####
+ *   #   #
+ *   #   #
+ */
+void print_A()
+{
+	int aux_x = (MAX_X-17)/2+12;
+	int aux_y = MAX_Y/3;
+	
+	gotoxy(aux_x+1, aux_y);
+	write(1, "###", strlen("###"));
+	gotoxy(aux_x, aux_y+1);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+1);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x, aux_y+2);
+	write(1, "#####", strlen("#####"));
+	gotoxy(aux_x, aux_y+3);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+3);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x, aux_y+4);
+	write(1, "#", strlen("#"));
+	gotoxy(aux_x+4, aux_y+4);
+	write(1, "#", strlen("#"));
+}
+
+void print_assignatura()
+{
+	print_S();
+	print_O();
+	print_A();
+}
+
+void display_menu()
+{
+	char buff[32] = "PRESS 'A' TO START";
+	int s = strlen(buff);
+	
+	set_color(0xf, 0x8);
+	gotoxy((MAX_X-s)/2, MAX_Y*4/5);
+	write(1, buff, s);
+	
+	set_color(0xf, 0x0);
+	char name[32] = "SUBESPACIAL OUTER ADVENTURE";
+	s = strlen(name);
+	gotoxy((MAX_X-s)/2, MAX_Y*3/5+2);
+	write(1, name, s);
+	
+	set_color(0xc, 0x0);
+	gotoxy((MAX_X-s)/2, MAX_Y*3/5+2);
+	write(1, "S", 1);
+	
+	gotoxy((MAX_X-s)/2 + 12, MAX_Y*3/5+2);
+	write(1, "O", 1);
+	
+	gotoxy((MAX_X-s)/2 + 18, MAX_Y*3/5+2);
+	write(1, "A", 1);
+	
+	setColor("red");
+	print_assignatura();
 }

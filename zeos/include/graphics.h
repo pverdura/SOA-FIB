@@ -9,8 +9,8 @@
 #define MAX_X 79
 #define MAX_Y 24
 
-#define SPSHIP_X 7
-#define SPSHIP_Y 4
+#define SPSHP_X 7
+#define SPSHP_Y 4
 void print_spaceship(int x, int y);
 
 #define ENEMY_X 5
@@ -27,5 +27,7 @@ void print_boss(int x, int y);
 void print_heart(int x, int y);
 
 void clear_screen();
+
+void display_menu();
 
 #endif /* __GRAPHICS_H__*/

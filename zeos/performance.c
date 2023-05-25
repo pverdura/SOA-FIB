@@ -5,6 +5,7 @@
 #include <libc.h>
 
 int num_frames = 0;
+char fps[10];
 int size = 0;
 int last_ticks = 0;
 
@@ -34,7 +35,6 @@ void print_fps()
 	int current_ticks = gettime();
 	
 	if((current_ticks - last_ticks) >= TICKS_SECOND) {
-		char fps[30];
 		int new_size; //How many bytes we have to print
 
 		itoa(num_frames, fps);
