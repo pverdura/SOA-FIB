@@ -31,7 +31,7 @@ SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o 
 LIBZEOS = -L . -l zeos -l auxjp
 
 #add to USROBJ the object files required to complete the user program
-USROBJ = libc.o user-utils.o performance.o # libjp.a
+USROBJ = libc.o user-utils.o performance.o graphics.o # libjp.a
 
 all:zeos.bin
 
@@ -85,6 +85,8 @@ utils.o:utils.c $(INCLUDEDIR)/utils.h
 p_stats.o:p_stats.c $(INCLUDEDIR)/utils.h
 
 keyboard.o:keyboard.c $(INCLUDEDIR)/keyboard.h
+
+graphics.o: graphics.c $(INCLUDEDIR)/graphics.h
 
 system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/system.h $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/mm.h $(INCLUDEDIR)/io.h $(INCLUDEDIR)/mm_address.h $(INCLUDEDIR)/keyboard.h
 
