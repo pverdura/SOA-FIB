@@ -295,8 +295,6 @@ void init_user()
 	spaceship.x = (MAX_X-SPSHP_X)/2;
 	spaceship.y = MAX_Y-2;
 	spaceship.lives = 3;
-	spaceship.size_x = SPSHP_X;
-	spaceship.size_y = SPSHP_Y;
 }
 
 void init_enemies()
@@ -306,8 +304,6 @@ void init_enemies()
 			enemy[i].lives = 1;
 			enemy[i].x = 8+j*3*(ENEMY_X+2);
 			enemy[i].y = ENEMY_Y*(i+1)+i;
-			enemy[i].size_x = ENEMY_X;
-			enemy[i].size_y = ENEMY_Y;
 		}
 	}
 }
@@ -480,7 +476,7 @@ void print_instructions()
 	char line1[MAX_X] = "T'HAN ENCARREGAT LA MISSIO DE DERROTAR ELS MALIGNES INoDes (IMPOSTORS";
 	char line2[MAX_X] = "NO DESITJATS), DERROTA TOTS ELS ENEMICS PER GUANYAR!";
 	char line3[MAX_X] = "AJUDA'T DE LES TECLES 'A' i 'D' PER MOURE'T A LA DRETA I ESQUERRA";
-	char line4[MAX_X] = "RESPECTIVAMENT, I PER DISPARAR UTILITZA L'ESPAI";
+	char line4[MAX_X] = "RESPECTIVAMENT, I PER DISPARAR LA TECLA 'S'";
 	char line5[MAX_X] = "T'ATREVEIXES?";
 	char line6[MAX_X] = "APRETA 'X' PER SORTIR";
 	char line[MAX_X] = "#############################################################################";
@@ -563,14 +559,98 @@ int use_spaceship(char* k, int x, int y)
 	return x;
 }
 
+int next_enemy(int i)
+{
+	int y_laser = laser[i].y+laser[i].dir;
+	
+		for(int j = 0; j < NUM_ENEMY; ++i) {
+		if(laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
+		   y_laser < enemy[j].y && y_laser >= enemy[j].y-ENEMY_Y) {
+			return j;
+		}
+	}
+	return -1;
+}
+
+int next_spaceship(int i)
+{
+	for(int j = 0; j < NUM_ENEMY; ++i) {
+		if(laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
+		   laser[i].y < enemy[j].y && laser[i].y >= enemy[j].y-ENEMY_Y) {
+			return j;
+		}
+	}
+	return -1;
+}
+
+void remove_heart()
+{
+	gotoxy(spaceship.lives*3, MAX_Y);
+	set_color(0x0, 0x0);
+	write(1, "##", 2);
+	
+	--spaceship.lives;
+}
+
+void kill_enemy(int i)
+{
+	erease(enemy[i].x, enemy[i].y, ENEMY_X, ENEMY_Y);
+	
+	enemy[i].x = -1;
+	enemy[i].y = -1;
+}
+
+void continue_laser(int i)
+{
+	setColor("black");
+	gotoxy(laser[i].x, laser[i].y);
+	write(1, "#", 1);
+	
+	laser[i].y += laser[i].dir;
+	
+	setColor("white");
+	gotoxy(laser[i].x, laser[i].y);
+	write(1, "#", 1);
+}
+
+void delete_laser(int i)
+{
+	setColor("black");
+	gotoxy(laser[i].x, laser[i].y);
+	write(1, "#", 1);
+	
+	laser[i].dir = 0;
+}
+
 void move_lasers()
 {
 	for(int i = 0; i < MAX_LASERS; ++i) {
 		if(laser[i].dir < 0) { //The laser is moving towards the enemis
-				
+			int found = next_enemy(i);
+			
+			if(found != -1) {
+				kill_enemy(i);
+				delete_laser(i);
+			}
+			else if(laser[i].y > MIN_Y) {
+				continue_laser(i);
+			}
+			else {
+				delete_laser(i);
+			}
 		}
 		else if(laser[i].dir > 0) { //The laser is moving towards us
-		
+			int found = next_spaceship(i);
+			
+			if(found) {
+				remove_heart();
+			}
+			else if(laser[i].y < MAX_Y) {
+				continue_laser(i);
+			}
+			else {
+				delete_laser(i);
+			}
 		}
 	}
 }

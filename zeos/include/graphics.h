@@ -5,7 +5,7 @@
 #define __GRAPHICS_H__
 
 #define MIN_X 0
-#define MIN_Y 0
+#define MIN_Y 1
 #define MAX_X 79
 #define MAX_Y 24
 
@@ -16,8 +16,6 @@ struct enty {
 	int lives;
 	int x;
 	int y;
-	int size_x;
-	int size_y;
 };
 
 struct beam {
