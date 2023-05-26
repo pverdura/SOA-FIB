@@ -3,6 +3,7 @@
 #include <graphics.h>
 
 char buff[24];
+int map[(MAX_X+1)*(MAX_Y+1)];
 
 int pid;
 
@@ -38,18 +39,33 @@ int __attribute__ ((__section__(".text.main")))
 				if(tecla[0] == 'a') {
 					play = 1;
 					tecla[0] = '\0';
+					init_map();
 				}
 				else if(tecla[0] == 'i') {
 					clear_screen();
+					int x = (MAX_X-SPSHP_X)/2;
+					int y = (MAX_Y-5);
+					menu = 0;
+					print_instructions();
 					
 					while(tecla[0] != 'x') {
 						print_fps();
-						if(menu != 0) {
-							print_instructions();
-							menu = 0;
-						}
-						print_spaceship((MAX_X-SPSHP_X)/2, MAX_Y-5);
+						
+						print_spaceship(x, y);
+						x = use_spaceship(&tecla[0], x, y);
 						inc_fps();
+					}
+				}
+				else if(tecla[0] == 'm') {
+					clear_screen();
+					set_color(0x7,0x7);
+					for(int i = 0; i < MAX_X; ++i) {
+						for(int j = 0; j < MAX_Y; ++i) {
+							if(map[i*MAX_Y+j]) {
+								gotoxy(i,j);
+								write(1, "#", 1);
+							}
+						}
 					}
 				}
 			}
@@ -74,13 +90,12 @@ int __attribute__ ((__section__(".text.main")))
 					print_enemy_3(x_en+2*(ENEMY_X+2), y_en);
 				}			
 			}
-			int map[(MAX_X+1)*(MAX_Y+1)];
 			
 			while(lives > 0 || !final) {
 				print_fps();
 				print_spaceship(x,y);
 				
-				
+				x = use_spaceship(&tecla[0], x, y);
 				inc_fps();
 			}
 			//We reset the variables

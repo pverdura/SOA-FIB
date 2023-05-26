@@ -5,6 +5,8 @@
 #include <libc.h>
 
 char* sys_color = " ";
+int cooldown = 0;
+extern int map;
 
 void setColor(char* color)
 {
@@ -275,9 +277,32 @@ void clear_screen()
 	write(1, buff, strlen(buff));
 }
 
+void fill_buff(char* buff, int n);
+
 void erease(int x, int y, int sx, int sy)
 {
+	char buff[sx];
+	fill_buff(buff, sx);
 	
+	set_color(0x0,0x0);
+	for(int i = 0; i < sy; ++i) {
+		gotoxy(x,y-i);
+		write(1, buff, sx);
+	}
+}
+
+void init_map()
+{
+	/*for(int i = 0; i < MAX_X; ++i) {
+		for(int j = 0; j < MAX_Y; ++i) {
+			if(j < 12 && j%4 != 0) { //ENEMY
+				map[i*MAX_Y+j] = 1;
+			}
+			else { //EMPTY POSITION
+				map[i*MAX_Y+j] = 0;
+			}
+		}
+	}*/
 }
 
 /*    ####
@@ -411,7 +436,7 @@ void print_instructions()
 	char line4[MAX_X] = "RESPECTIVAMENT, I PER DISPARAR UTILITZA L'ESPAI";
 	char line5[MAX_X] = "T'ATREVEIXES?";
 	char line6[MAX_X] = "APRETA 'X' PER SORTIR";
-	char line[MAX_X] = "#####################################################################";
+	char line[MAX_X] = "#############################################################################";
 	
 	set_color(0xf, 0x0);
 	gotoxy(5, 3);
@@ -429,6 +454,50 @@ void print_instructions()
 	write(1, line6, strlen(line6));
 	
 	set_color(0x7,0x7);
-	gotoxy((MAX_X-strlen(line))/2, 11);
+	gotoxy(1, 11);
 	write(1, line, strlen(line));
+}
+
+void spawn_attack(int x, int y, int dir)
+{
+	set_color(0x7,0x7);
+	gotoxy(x,y);
+	write(1, "#", 1);
+}
+
+void attack(int x, int y, int user)
+{
+	if(user == 0) { //SPACESHIP
+		spawn_attack(x+(SPSHP_X/2), y-SPSHP_Y, 1);
+	}
+	else if(user == 1) { //ENEMY
+		spawn_attack(x+(ENEMY_X/2), y+1, -1);
+	}
+}
+
+int use_spaceship(char* k, int x, int y)
+{
+	if(cooldown > 0) {
+		--cooldown;
+	}
+	
+	if(*k == 'a' && x > MIN_X) { //LEFT
+		--x;
+		erease(x+1, y, SPSHP_X, SPSHP_Y);
+		*k = '\0';
+	}
+	else if(*k == 'd' && x <= MAX_X-SPSHP_X) { //RIGHT
+		++x;
+		erease(x-1, y, SPSHP_X, SPSHP_Y);
+		*k = '\0';
+	}
+	else if(*k == 's') { //ATTACK
+		if(cooldown == 0) {
+			attack(x, y, 0);
+			cooldown = 5;
+		}
+		*k = '\0';
+	}
+	
+	return x;
 }
