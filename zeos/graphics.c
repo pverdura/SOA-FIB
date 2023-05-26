@@ -5,7 +5,6 @@
 #include <libc.h>
 
 char* sys_color = " ";
-int cooldown = 0;
 
 void setColor(char* color)
 {
@@ -449,7 +448,7 @@ void display_menu()
 
 void display_win()
 {
-	char msg[20] = "GAME OVER";
+	char msg[20] = "YOU WIN!";
 	set_color(0xc, 0x0);
 	gotoxy((MAX_X-strlen(msg))/2, MAX_Y/2);
 	write(1, msg, strlen(msg));
@@ -461,7 +460,7 @@ void display_win()
 
 void display_lose()
 {
-	char msg[20] = "YOU WIN!";
+	char msg[20] = "GAME OVER";
 	set_color(0xc, 0x0);
 	gotoxy((MAX_X-strlen(msg))/2, MAX_Y/2);
 	write(1, msg, strlen(msg));
@@ -479,26 +478,21 @@ void print_instructions()
 	char line4[MAX_X] = "RESPECTIVAMENT, I PER DISPARAR LA TECLA 'S'";
 	char line5[MAX_X] = "T'ATREVEIXES?";
 	char line6[MAX_X] = "APRETA 'X' PER SORTIR";
-	char line[MAX_X] = "#############################################################################";
 	
 	set_color(0xf, 0x0);
-	gotoxy(5, 3);
-	write(1, line1, strlen(line1));
-	gotoxy(5, 4);
-	write(1, line2, strlen(line2));
 	gotoxy(5, 6);
-	write(1, line3, strlen(line3));
+	write(1, line1, strlen(line1));
 	gotoxy(5, 7);
-	write(1, line4, strlen(line4));
+	write(1, line2, strlen(line2));
+	gotoxy(5, 8);
+	write(1, line3, strlen(line3));
 	gotoxy(5, 9);
+	write(1, line4, strlen(line4));
+	gotoxy(5, 11);
 	write(1, line5, strlen(line5));
 	
 	gotoxy(MAX_X-5-strlen(line6), MAX_Y-1);
 	write(1, line6, strlen(line6));
-	
-	set_color(0x7,0x7);
-	gotoxy(1, 11);
-	write(1, line, strlen(line));
 }
 
 void spawn_attack(int x, int y, int dir, int pos)
@@ -532,10 +526,6 @@ int avail_laser()
 
 int use_spaceship(char* k, int x, int y)
 {
-	if(cooldown > 0) {
-		--cooldown;
-	}
-	
 	if(*k == 'a' && x > MIN_X) { //LEFT
 		--x;
 		erease(x+1, y, SPSHP_X, SPSHP_Y);
@@ -549,9 +539,8 @@ int use_spaceship(char* k, int x, int y)
 	else if(*k == 's') { //ATTACK
 		int pos = avail_laser();
 		
-		if(cooldown == 0 && pos >= 0) {
+		if(pos >= 0) {
 			attack(x, y, 0, pos);
-			cooldown = 5;
 		}
 		*k = '\0';
 	}
@@ -561,12 +550,9 @@ int use_spaceship(char* k, int x, int y)
 
 int next_enemy(int i)
 {
-	int y_laser = laser[i].y+laser[i].dir;
-	set_color(0xf, 0x0);
-	
 	for(int j = 0; j < NUM_ENEMY; ++i) {
-		if(//laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
-		   y_laser < enemy[j].y-ENEMY_Y && y_laser >= enemy[j].y) {
+		if(laser[i].x < enemy[j].x+ENEMY_X && laser[i].x >= enemy[j].x &&
+		   laser[i].y < enemy[j].y && laser[i].y >= enemy[j].y-ENEMY_Y) {
 			return j;
 		}
 	}
@@ -576,8 +562,8 @@ int next_enemy(int i)
 int next_spaceship(int i)
 {
 	for(int j = 0; j < NUM_ENEMY; ++i) {
-		if(laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
-		   laser[i].y < enemy[j].y && laser[i].y >= enemy[j].y-ENEMY_Y) {
+		if(laser[i].x >= spaceship.x+SPSHP_X && laser[i].x < spaceship.x &&
+		   laser[i].y < spaceship.y && laser[i].y >= spaceship.y-SPSHP_Y) {
 			return j;
 		}
 	}

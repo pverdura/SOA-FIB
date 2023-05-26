@@ -48,12 +48,7 @@ int __attribute__ ((__section__(".text.main")))
 					init_map();
 							
 					while(tecla[0] != 'x') {
-						print_fps();
-						print_spaceship(x, y);
-						
-						move_lasers();
-						x = use_spaceship(&tecla[0], x, y);
-						inc_fps();
+						getpid();
 					}
 				}
 			}
