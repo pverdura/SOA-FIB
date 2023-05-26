@@ -54,6 +54,8 @@ void erase(int x, int y, int sx, int sy);
 
 void init_map();
 void display_menu();
+void display_win();
+void display_lose();
 void print_instructions();
 
 int use_spaceship(char* k, int x, int y);

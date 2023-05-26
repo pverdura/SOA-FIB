@@ -451,6 +451,30 @@ void display_menu()
 	//print_spaceship((MAX_X+SPSHP_X)*5/7, (MAX_Y+SPSHP_Y)/2);
 }
 
+void display_win()
+{
+	char msg[20] = "GAME OVER";
+	set_color(0xc, 0x0);
+	gotoxy((MAX_X-strlen(msg))/2, MAX_Y/2);
+	write(1, msg, strlen(msg));
+	
+	char help[MAX_X] = "PRESS 'R' TO RESTART THE GAME";
+	gotoxy((MAX_X-strlen(help))/2, MAX_Y/2+3);
+	write(1, help, strlen(help));
+}
+
+void display_lose()
+{
+	char msg[20] = "YOU WIN!";
+	set_color(0xc, 0x0);
+	gotoxy((MAX_X-strlen(msg))/2, MAX_Y/2);
+	write(1, msg, strlen(msg));
+	
+	char help[MAX_X] = "PRESS 'R' TO RESTART THE GAME";
+	gotoxy((MAX_X-strlen(help))/2, MAX_Y/2+3);
+	write(1, help, strlen(help));
+}
+
 void print_instructions()
 {
 	char line1[MAX_X] = "T'HAN ENCARREGAT LA MISSIO DE DERROTAR ELS MALIGNES INoDes (IMPOSTORS";
@@ -481,21 +505,33 @@ void print_instructions()
 	write(1, line, strlen(line));
 }
 
-void spawn_attack(int x, int y, int dir)
+void spawn_attack(int x, int y, int dir, int pos)
 {
 	set_color(0x7,0x7);
 	gotoxy(x,y);
 	write(1, "#", 1);
+	
+	laser[pos].x = x;
+	laser[pos].y = y;
+	laser[pos].dir = dir;
 }
 
-void attack(int x, int y, int user)
+void attack(int x, int y, int user, int pos)
 {
 	if(user == 0) { //SPACESHIP
-		spawn_attack(x+(SPSHP_X/2), y-SPSHP_Y, 1);
+		spawn_attack(x+(SPSHP_X/2), y-SPSHP_Y, -1, pos);
 	}
 	else if(user == 1) { //ENEMY
-		spawn_attack(x+(ENEMY_X/2), y+1, -1);
+		spawn_attack(x+(ENEMY_X/2), y+1, 1, pos);
 	}
+}
+
+int avail_laser()
+{
+	for(int i = 0; i < MAX_LASERS; ++i) {
+		if(laser[i].dir == 0) return i;
+	}
+	return -1;
 }
 
 int use_spaceship(char* k, int x, int y)
@@ -515,8 +551,10 @@ int use_spaceship(char* k, int x, int y)
 		*k = '\0';
 	}
 	else if(*k == 's') { //ATTACK
-		if(cooldown == 0) {
-			attack(x, y, 0);
+		int pos = avail_laser();
+	
+		if(cooldown == 0 && pos >= 0) {
+			attack(x, y, -1, pos);
 			cooldown = 5;
 		}
 		*k = '\0';
@@ -527,5 +565,12 @@ int use_spaceship(char* k, int x, int y)
 
 void move_lasers()
 {
-	
+	for(int i = 0; i < MAX_LASERS; ++i) {
+		if(laser[i].dir < 0) { //The laser is moving towards the enemis
+				
+		}
+		else if(laser[i].dir > 0) { //The laser is moving towards us
+		
+		}
+	}
 }

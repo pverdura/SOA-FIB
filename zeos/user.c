@@ -45,11 +45,13 @@ int __attribute__ ((__section__(".text.main")))
 					int y = (MAX_Y-5);
 					menu = 0;
 					print_instructions();
-					
+					init_map();
+							
 					while(tecla[0] != 'x') {
 						print_fps();
-						
 						print_spaceship(x, y);
+						
+						move_lasers();
 						x = use_spaceship(&tecla[0], x, y);
 						inc_fps();
 					}
@@ -58,6 +60,7 @@ int __attribute__ ((__section__(".text.main")))
 			clear_screen();
 			init_map();
 			int win = 0;
+			int num_enem = NUM_ENEMY;
 			
 			for(int i = 0; i < spaceship.lives; ++i) {
 				print_heart(i*3,MAX_Y);
@@ -74,13 +77,33 @@ int __attribute__ ((__section__(".text.main")))
 				}			
 			}
 			
-			while(spaceship.lives > 0 || !win) {
+			while(spaceship.lives > 0 && !win) {
 				print_fps();
 				print_spaceship(spaceship.x,spaceship.y);
 				
 				move_lasers();
+				if(num_enem == 0) win = 1;
+				
 				spaceship.x = use_spaceship(&tecla[0], spaceship.x, spaceship.y);
 				inc_fps();
+			}
+			
+			int display = 0;
+			while(win && tecla[0] != 'r') { //WIN
+				print_fps();
+				
+				if(!display) {
+					display_win();
+					display = 1;
+				}
+			}
+			while(!win && tecla[0] != 'r') { //LOSE
+				print_fps();
+				
+				if(!display) {
+					display_lose();
+					display = 1;
+				}
 			}
 			//We reset the variables
 			play = 0;
