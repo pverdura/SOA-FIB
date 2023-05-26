@@ -3,7 +3,6 @@
 #include <graphics.h>
 
 char buff[24];
-int map[(MAX_X+1)*(MAX_Y+1)];
 
 int pid;
 
@@ -39,7 +38,6 @@ int __attribute__ ((__section__(".text.main")))
 				if(tecla[0] == 'a') {
 					play = 1;
 					tecla[0] = '\0';
-					init_map();
 				}
 				else if(tecla[0] == 'i') {
 					clear_screen();
@@ -56,27 +54,12 @@ int __attribute__ ((__section__(".text.main")))
 						inc_fps();
 					}
 				}
-				else if(tecla[0] == 'm') {
-					clear_screen();
-					set_color(0x7,0x7);
-					for(int i = 0; i < MAX_X; ++i) {
-						for(int j = 0; j < MAX_Y; ++i) {
-							if(map[i*MAX_Y+j]) {
-								gotoxy(i,j);
-								write(1, "#", 1);
-							}
-						}
-					}
-				}
 			}
 			clear_screen();
+			init_map();
+			int win = 0;
 			
-			int x = (MAX_X-SPSHP_X)/2;
-			int y = MAX_Y-2;
-			int lives = 3, num_enem = 27;
-			int final = 0;
-			
-			for(int i = 0; i < lives; ++i) {
+			for(int i = 0; i < spaceship.lives; ++i) {
 				print_heart(i*3,MAX_Y);
 			}
 			
@@ -91,11 +74,12 @@ int __attribute__ ((__section__(".text.main")))
 				}			
 			}
 			
-			while(lives > 0 || !final) {
+			while(spaceship.lives > 0 || !win) {
 				print_fps();
-				print_spaceship(x,y);
+				print_spaceship(spaceship.x,spaceship.y);
 				
-				x = use_spaceship(&tecla[0], x, y);
+				move_lasers();
+				spaceship.x = use_spaceship(&tecla[0], spaceship.x, spaceship.y);
 				inc_fps();
 			}
 			//We reset the variables

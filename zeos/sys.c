@@ -131,7 +131,7 @@ int sys_fork(void)
   {
     set_ss_pag(process_PT, PAG_LOG_INIT_CODE+pag, get_frame(parent_PT, PAG_LOG_INIT_CODE+pag));
   }
-  /* Copy parent's DATA to child. We will use TOTAL_PAGES-1 as a temp logical page to map to */
+  /* Copy parent's DATA to child. */
   for (pag=NUM_PAG_KERNEL+NUM_PAG_CODE; pag<NUM_PAG_KERNEL+NUM_PAG_CODE+NUM_PAG_DATA; pag++)
   {
   	/* We get a temporat page */
@@ -146,6 +146,7 @@ int sys_fork(void)
     set_ss_pag(parent_PT, copy_page, get_frame(process_PT, pag));
     copy_data((void*)(pag<<12), (void*)(copy_page<<12), PAGE_SIZE);
     del_ss_pag(parent_PT, copy_page);
+    //set_ss_pag(parent_PT, PAG_LOG_INIT_DATA+pag, get_frame(parent_PT, PAG_LOG_INIT_DATA+pag));
   }
   /* Deny access to the child's memory space */
   set_cr3(get_DIR(current()));

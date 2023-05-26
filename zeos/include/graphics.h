@@ -9,6 +9,29 @@
 #define MAX_X 79
 #define MAX_Y 24
 
+#define NUM_ENEMY 27
+#define MAX_LASERS 10
+
+struct enty {
+	int lives;
+	int x;
+	int y;
+	int size_x;
+	int size_y;
+};
+
+struct beam {
+	int x;
+	int y;
+	int dir;
+};
+
+struct enty spaceship;
+struct enty enemy[NUM_ENEMY];
+struct beam laser[MAX_LASERS];
+
+int map[MAX_X*MAX_Y];
+
 #define SPSHP_X 7
 #define SPSHP_Y 3
 void print_spaceship(int x, int y);
@@ -34,5 +57,6 @@ void display_menu();
 void print_instructions();
 
 int use_spaceship(char* k, int x, int y);
+void move_lasers();
 
 #endif /* __GRAPHICS_H__*/

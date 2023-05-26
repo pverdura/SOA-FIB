@@ -6,7 +6,6 @@
 
 char* sys_color = " ";
 int cooldown = 0;
-extern int map;
 
 void setColor(char* color)
 {
@@ -291,18 +290,42 @@ void erease(int x, int y, int sx, int sy)
 	}
 }
 
+void init_user()
+{
+	spaceship.x = (MAX_X-SPSHP_X)/2;
+	spaceship.y = MAX_Y-2;
+	spaceship.lives = 3;
+	spaceship.size_x = SPSHP_X;
+	spaceship.size_y = SPSHP_Y;
+}
+
+void init_enemies()
+{
+	for(int i = 0; i < 3; ++i) {
+		for(int j = 0; j < 3; ++j) {
+			enemy[i].lives = 1;
+			enemy[i].x = 8+j*3*(ENEMY_X+2);
+			enemy[i].y = ENEMY_Y*(i+1)+i;
+			enemy[i].size_x = ENEMY_X;
+			enemy[i].size_y = ENEMY_Y;
+		}
+	}
+}
+
+void init_beams()
+{
+	for(int i = 0; i < MAX_LASERS; ++i) {
+		laser[i].x = -1;
+		laser[i].y = -1;
+		laser[i].dir = 0;
+	}
+}
+
 void init_map()
 {
-	/*for(int i = 0; i < MAX_X; ++i) {
-		for(int j = 0; j < MAX_Y; ++i) {
-			if(j < 12 && j%4 != 0) { //ENEMY
-				map[i*MAX_Y+j] = 1;
-			}
-			else { //EMPTY POSITION
-				map[i*MAX_Y+j] = 0;
-			}
-		}
-	}*/
+	init_user();
+	init_enemies();
+	init_beams();
 }
 
 /*    ####
@@ -500,4 +523,9 @@ int use_spaceship(char* k, int x, int y)
 	}
 	
 	return x;
+}
+
+void move_lasers()
+{
+	
 }
