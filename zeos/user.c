@@ -61,6 +61,7 @@ int __attribute__ ((__section__(".text.main")))
 			init_map();
 			int win = 0;
 			int num_enem = NUM_ENEMY;
+			int lastclock = 0;
 			
 			for(int i = 0; i < spaceship.lives; ++i) {
 				print_heart(i*3,MAX_Y);
@@ -81,9 +82,12 @@ int __attribute__ ((__section__(".text.main")))
 				print_fps();
 				print_spaceship(spaceship.x,spaceship.y);
 				
-				move_lasers();
 				if(num_enem == 0) win = 1;
 				
+				if(gettime()-lastclock > TICKS_SECOND*3) {
+					move_lasers();
+					lastclock = gettime();
+				}
 				spaceship.x = use_spaceship(&tecla[0], spaceship.x, spaceship.y);
 				inc_fps();
 			}

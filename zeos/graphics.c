@@ -524,7 +524,7 @@ void attack(int x, int y, int user, int pos)
 
 int avail_laser()
 {
-	for(int i = 0; i < MAX_LASERS; ++i) {
+	for(int i = 1; i < MAX_LASERS; ++i) {
 		if(laser[i].dir == 0) return i;
 	}
 	return -1;
@@ -548,9 +548,9 @@ int use_spaceship(char* k, int x, int y)
 	}
 	else if(*k == 's') { //ATTACK
 		int pos = avail_laser();
-	
+		
 		if(cooldown == 0 && pos >= 0) {
-			attack(x, y, -1, pos);
+			attack(x, y, 0, pos);
 			cooldown = 5;
 		}
 		*k = '\0';
@@ -562,10 +562,11 @@ int use_spaceship(char* k, int x, int y)
 int next_enemy(int i)
 {
 	int y_laser = laser[i].y+laser[i].dir;
+	set_color(0xf, 0x0);
 	
-		for(int j = 0; j < NUM_ENEMY; ++i) {
-		if(laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
-		   y_laser < enemy[j].y && y_laser >= enemy[j].y-ENEMY_Y) {
+	for(int j = 0; j < NUM_ENEMY; ++i) {
+		if(//laser[i].x >= enemy[j].x && laser[i].x < enemy[j].x+ENEMY_X &&
+		   y_laser < enemy[j].y-ENEMY_Y && y_laser >= enemy[j].y) {
 			return j;
 		}
 	}
@@ -585,7 +586,7 @@ int next_spaceship(int i)
 
 void remove_heart()
 {
-	gotoxy(spaceship.lives*3, MAX_Y);
+	gotoxy(spaceship.lives*2, MAX_Y);
 	set_color(0x0, 0x0);
 	write(1, "##", 2);
 	

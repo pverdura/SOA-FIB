@@ -58,5 +58,6 @@ void print_instructions();
 
 int use_spaceship(char* k, int x, int y);
 void move_lasers();
+void remove_heart();
 
 #endif /* __GRAPHICS_H__*/
